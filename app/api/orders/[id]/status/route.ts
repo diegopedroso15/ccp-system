@@ -3,10 +3,11 @@ import { NextResponse } from "next/server";
 
 export async function POST(
   request: Request,
-  { params }: { params: { id: number; status: string } }
+  { params }: { params: { id: number } }
 ) {
   const { status } = await request.json();
   const slug = params.id;
+
   try {
     const connection = await pool.connect();
     try {

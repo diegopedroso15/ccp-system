@@ -2,8 +2,11 @@
 
 import { useState } from 'react';
 import { Card, Button, Input, Textarea } from "@nextui-org/react";
+import { toast } from 'react-toastify';
+import { useRouter } from 'next/navigation';
 
 export default function EnviarDemanda() {
+  const router = useRouter();
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
   const [tipo, setTipo] = useState('');
@@ -28,11 +31,12 @@ export default function EnviarDemanda() {
     });
 
     if (response.ok) {
-      alert('Demanda enviada com sucesso!');
+      toast.success('Demanda enviada com sucesso!');
       setTipo('');
       setDescricao('');
+      router.push('/login');
     } else {
-      alert('Erro ao enviar a demanda.');
+      toast.error('Erro ao enviar a demanda');
     }
   };
 

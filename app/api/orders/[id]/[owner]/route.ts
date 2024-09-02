@@ -3,16 +3,16 @@ import { NextResponse } from "next/server";
 
 export async function POST(
   request: Request,
-  { params }: { params: { id: number; owner: string } }
+  { params }: { params: { id: number; owner: number } }
 ) {
-  const { owner } = await request.json();
-  const slug = params.id;
+  const id = params.id;
+  const owner = params.owner;
   try {
     const connection = await pool.connect();
     try {
       await connection.query(
         `UPDATE orders SET ownerId = $1 WHERE id = $2`,
-        [owner, slug]
+        [owner, id]
       );
       return NextResponse.json({ message: "Owner atualizado com sucesso" });
     } finally {

@@ -5,7 +5,7 @@ import { Button, Card, Input, Spacer, Table, TableBody, TableCell, TableColumn, 
 import { useRouter } from 'next/navigation';
 import { IOrder } from '@/types';
 
-export default function Demandas() {
+export default function Aproval() {
   const router = useRouter();
   const [order, setOrder] = useState<IOrder[]>([]);
 
@@ -23,7 +23,7 @@ export default function Demandas() {
     <div className="flex justify-center items-center min-h-full">
       <Card className="max-w-4xl w-full p-8 shadow-xl bg-white rounded-2xl">
         <p className="text-3xl font-bold text-blue-700 mb-6 text-center">
-          Solicitações de Parecer
+          Solicitações de Aprovação
         </p>
         
         <Input
@@ -34,7 +34,7 @@ export default function Demandas() {
         />
 
         <Table
-          aria-label="Tabela de Demandas"
+          aria-label="Tabela de Aprovações"
           className="mb-6"
         >
           <TableHeader>
@@ -53,7 +53,7 @@ export default function Demandas() {
                 <TableCell>{demanda.receptionDate}</TableCell>
                 <TableCell>
                   <Button size="sm" className="bg-blue-600 hover:bg-blue-700" onClick={() => {
-                    router.push(`/orders/judgment/${demanda.id}`);
+                    router.push(`/orders/aproval/${demanda.id}`);
                   }
                   }>
                     Ver

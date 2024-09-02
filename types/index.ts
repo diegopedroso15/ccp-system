@@ -24,7 +24,7 @@ export type IOrderStatus = {
     | "Esperando Parecer"
     | "Solicitado Revisão"
     | "Parecer Recusado"
-    | "Paracer Aceito"
+    | "Parecer Aceito"
     | "Concluído Aprovado"
     | "Concluído Recusado";
 };

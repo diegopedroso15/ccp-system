@@ -16,10 +16,10 @@ import { toast } from "react-toastify";
 export default function DetalhesParecer() {
   const router = useRouter();
   const [order, setOrder] = useState<IOrder>();
-  const [review, setReview] = useState<string>("");
-  const [status, setStatus] = useState<string>("");
   const [secretaries, setSecretaries] = useState<IEmployee[]>([]);
-  const [secretary, setSecretary] = useState<number>();
+  const [secretary, setSecretary] = useState<number>(0);
+  const [reviewers, setReviewers] = useState<IEmployee[]>([]);
+  const [reviewer, setReviewer] = useState<number>(0);
   const { id } = useParams();
 
   useEffect(() => {
@@ -37,32 +37,63 @@ export default function DetalhesParecer() {
       const data = await response.json();
       setSecretaries(data);
     };
+    const fetchReviewers = async () => {
+      const response = await fetch("/api/employees/reviewers", {
+        method: "GET",
+      });
+      const data = await response.json();
+      setReviewers(data);
+    };
 
+    fetchReviewers();
     fetchSecretarsecretaries();
     fetchOrder();
   }, []);
 
-  const handleReviewSubmission = async () => {
-    const response = await fetch(`/api/orders/review/${order?.id}`, {
+  const handleSecretarySubmission = async (status: string) => {
+    if (secretary === 0) {
+      toast.error("Selecione um secretário");
+      return;
+    }
+    let orderStatus = status;
+    if (orderStatus === "Concluído") {
+      orderStatus = order?.status === "Parecer Aceito" ? "Concluído Aprovado" : "Concluído Recusado";
+    }
+    await fetch(`/api/orders/${id}/status/`, {
       method: "POST",
-      body: JSON.stringify({ review: review, status: status }),
+      body: JSON.stringify({ orderStatus }),
     });
 
-    if (response.ok) {
-      toast.success("Demanda salva com sucesso");
-    } else {
-      toast.error("Erro ao salva a demanda");
-    }
-  };
-
-  const handleSecretarySubmission = async () => {
     const response = await fetch(`/api/orders/${id}/${secretary}`, {
       method: "POST",
     });
 
     if (response.ok) {
       toast.success("Demanda encaminhada com sucesso");
-      router.push("/orders/judgment");
+      router.push("/orders/aproval");
+    } else {
+      toast.error("Erro ao encaminhar a demanda");
+    }
+  };
+
+  const handleReviewerSubmission = async () => {
+    if (reviewer === 0) {
+      toast.error("Selecione um parecerista");
+      return;
+    }
+    const status = "Revisão Solicitada";
+    await fetch(`/api/orders/${id}/status/`, {
+      method: "POST",
+      body: JSON.stringify({ status }),
+    });
+
+    const response = await fetch(`/api/orders/${id}/${reviewer}`, {
+      method: "POST",
+    });
+
+    if (response.ok) {
+      toast.success("Demanda encaminhada com sucesso");
+      router.push("/orders/aproval");
     } else {
       toast.error("Erro ao encaminhar a demanda");
     }
@@ -104,33 +135,20 @@ export default function DetalhesParecer() {
             <p className="font-semibold text-gray-700">Data de Recebimento:</p>
             <p className="text-gray-900">{order?.receptionDate}</p>
           </div>
+          <div className="flex justify-between">
+            <p className="font-semibold text-gray-700">Parecerista:</p>
+            <p className="text-gray-900">{order?.reviewer}</p>
+          </div>
+          <div className="flex justify-between">
+            <p className="font-semibold text-gray-700">Data de Parecer:</p>
+            <p className="text-gray-900">{order?.reviewDate}</p>
+          </div>
+          <div className="">
+            <p className="font-semibold text-gray-700">Parecer:</p>
+            <text className="text-gray-900">{order?.review}</text>
+          </div>
         </div>
-        <div className="justify-center row ">
-          <Textarea
-            fullWidth
-            label="Parecer"
-            placeholder="Digite aqui o parecer"
-            onChange={(e) => {
-              setReview(e.target.value);
-            }}
-          />
-          <Select className="mt-2" placeholder="Selecione o status do parecer">
-            <SelectItem key={1} onClick={() => setStatus("Parecer Aceito")}>
-              Parecer Aceito
-            </SelectItem>
-            <SelectItem key={2} onClick={() => setStatus("Parecer Recusado")}>
-              Parecer Recusado
-            </SelectItem>
-          </Select>
-          <Button
-            color="primary"
-            className="w-full mt-2"
-            onClick={() => {
-              handleReviewSubmission();
-            }}
-          >
-            Salvar Parecer
-          </Button>
+        <div className="justify-center row">
           <div className="mt-10">
             <Select placeholder="Selecione o secretário">
               {secretaries.map((emp) => (
@@ -139,14 +157,43 @@ export default function DetalhesParecer() {
                 </SelectItem>
               ))}
             </Select>
+            <div className="flex row-span-2 gap-4">
+              <Button
+                color="warning"
+                className="w-full mt-2"
+                onClick={() => {
+                  handleSecretarySubmission("Solicitado Revisão");
+                }}
+              >
+                Solicitar Revisão ao Secretário
+              </Button>
+              <Button
+                color="success"
+                className="w-full mt-2"
+                onClick={() => {
+                  handleSecretarySubmission("Concluído");
+                }}
+              >
+                Aprovar e Enviar ao Secretário
+              </Button>
+            </div>
+          </div>
+          <div className="mt-10">
+            <Select placeholder="Selecione o parecerista">
+              {reviewers.map((emp) => (
+                <SelectItem key={emp.name} onClick={() => setReviewer(emp.id)}>
+                  {emp.name}
+                </SelectItem>
+              ))}
+            </Select>
             <Button
               color="success"
               className="w-full mt-2"
               onClick={() => {
-                handleSecretarySubmission();
+                handleReviewerSubmission();
               }}
             >
-              Encaminhar para Secretário
+              Solicitar Revisão ao Parecerista
             </Button>
           </div>
         </div>

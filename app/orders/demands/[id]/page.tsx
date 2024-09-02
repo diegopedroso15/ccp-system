@@ -4,9 +4,12 @@ import { useState, useEffect } from "react";
 import { Card, Button, Select, SelectItem } from "@nextui-org/react";
 import { useParams } from "next/navigation";
 import { IEmployee, IOrder, IOrderStatus } from "@/types";
+import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 
 export default function DetalhesDemanda() {
   const { id } = useParams();
+  const router = useRouter();
   const [order, setOrder] = useState<IOrder>();
   const [reviewers, setReviewers] = useState<IEmployee[]>([]);
   const [reviewer, setReviewer] = useState(0);
@@ -21,14 +24,14 @@ export default function DetalhesDemanda() {
       });
       const data = await response.json();
       setReviewers(data);
-    }
+    };
     const fetchCoordinators = async () => {
       const response = await fetch("/api/employees/coordinators", {
         method: "GET",
       });
       const data = await response.json();
       setCoordinators(data);
-    }
+    };
     const fetchOrder = async () => {
       const response = await fetch(`/api/orders/${id}`, {
         method: "GET",
@@ -36,20 +39,26 @@ export default function DetalhesDemanda() {
       const data = await response.json();
       setOrder(data);
     };
-    
+
     fetchReviewers();
     fetchCoordinators();
     fetchOrder();
   }, [id]);
 
-  const handleSubmission = async (status: IOrderStatus) => {
-    const response = await fetch(`/api/orders/${id}/${status}`, {
+  const handleSubmission = async (ownerId: number) => {
+    const response = await fetch(`/api/orders/${id}/${ownerId}`, {
       method: "POST",
-      body: JSON.stringify({ status: "submitted" }),
     });
-    const data = await response.json();
-    alert(data.message);
-  }
+
+    console.log(response);
+
+    if (response.ok) {
+      toast.success("Demanda encaminhada com sucesso");
+      router.push("/orders/demands");
+    } else {
+      toast.error("Erro ao encaminhar a demanda");
+    }
+  };
 
   return (
     <div className="flex justify-center items-center min-h-screen p-4">
@@ -106,7 +115,7 @@ export default function DetalhesDemanda() {
           <p className="font-semibold text-blue-600">
             Encaminhar para Parecerista
           </p>
-          <Select>
+          <Select placeholder="Selecione o parecerista">
             {reviewers.map((parecerista) => (
               <SelectItem
                 key={parecerista.name}
@@ -121,8 +130,7 @@ export default function DetalhesDemanda() {
             color="primary"
             className="w-full mt-5"
             onClick={() => {
-              const status = order?.status === "Solicitado" ? "Esperando Parecer" : "Solicitado Revisão";
-              handleSubmission({ status: status });
+              handleSubmission(reviewer);
             }}
           >
             Enviar para Parecerista
@@ -132,11 +140,11 @@ export default function DetalhesDemanda() {
           <p className="font-semibold text-blue-600">
             Encaminhar para Coordernador
           </p>
-          <Select>
+          <Select placeholder="Selecione o coordenador">
             {coordinators.map((coordinator) => (
               <SelectItem
                 key={coordinator.name}
-                onClick={() => setReviewer(coordinator.id)}
+                onClick={() => setCoordinator(coordinator.id)}
               >
                 {coordinator.name}
               </SelectItem>
@@ -147,7 +155,7 @@ export default function DetalhesDemanda() {
             color="primary"
             className="w-full mt-5"
             onClick={() => {
-              alert(`Demanda enviada para`);
+              handleSubmission(coordinator);
             }}
           >
             Enviar para Coordenador

@@ -23,8 +23,8 @@ export const siteConfig = {
       href: "/orders",
     },
     {
-      label: "Avaliações",
-      href: "/orders/jugment",
+      label: "Pareceres",
+      href: "/orders/judgment",
     },
     {
       label: "Deslogar",
@@ -37,8 +37,8 @@ export const siteConfig = {
       href: "/orders",
     },
     {
-      label: "Encaminhar",
-      href: "/orders/forward",
+      label: "Pareceres para aprovar",
+      href: "/orders/aproval",
     },
     {
       label: "Deslogar",

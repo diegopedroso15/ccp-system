@@ -9,7 +9,7 @@ export async function POST(request: Request) {
     try {
       const result = await connection.query(
         `INSERT INTO orders (type, status, name, email, description, ownerId)
-         VALUES ($1, 'SOLICITADO', $2, $3, $4, 1)
+         VALUES ($1, 'Solicitado', $2, $3, $4, 1)
          RETURNING *`,
         [data.type, data.name, data.email, data.description]
       );
@@ -17,7 +17,7 @@ export async function POST(request: Request) {
       const newDemand = {
         id: result.rows[0].id,
         ...data,
-        status: "SOLICITADO",
+        status: "Solicitado",
         receptionDate: new Date(),
       };
 
