@@ -1,69 +1,70 @@
 export type SiteConfig = typeof siteConfig;
 
 export const siteConfig = {
-  name: "Next.js + NextUI",
-  description: "Make beautiful websites regardless of your design experience.",
-  navItems: [
+  name: "USP - PORTAL DE DEMANDAS",
+  description: "Portal de demandas da USP",
+  secretaryItems: [
     {
       label: "Home",
+      href: "/orders",
+    },
+    {
+      label: "Demandas",
+      href: "/orders/demands",
+    },
+    {
+      label: "Deslogar",
       href: "/",
     },
+  ],
+  reviewerItems: [
     {
-      label: "Docs",
-      href: "/docs",
+      label: "Home",
+      href: "/orders",
     },
     {
-      label: "Pricing",
-      href: "/pricing",
+      label: "Avaliações",
+      href: "/orders/jugment",
     },
     {
-      label: "Blog",
-      href: "/blog",
+      label: "Deslogar",
+      href: "/",
+    },
+  ],
+  coordenatorItems: [
+    {
+      label: "Home",
+      href: "/orders",
     },
     {
-      label: "About",
-      href: "/about",
+      label: "Encaminhar",
+      href: "/orders/forward",
+    },
+    {
+      label: "Deslogar",
+      href: "/",
     },
   ],
   navMenuItems: [
     {
-      label: "Profile",
-      href: "/profile",
+      label: "Home",
+      href: "/orders",
     },
     {
-      label: "Dashboard",
-      href: "/dashboard",
+      label: "Demandas",
+      href: "/orders/demands",
     },
     {
-      label: "Projects",
-      href: "/projects",
+      label: "Avaliações",
+      href: "/orders/jugment"
     },
     {
-      label: "Team",
-      href: "/team",
-    },
-    {
-      label: "Calendar",
-      href: "/calendar",
-    },
-    {
-      label: "Settings",
-      href: "/settings",
-    },
-    {
-      label: "Help & Feedback",
-      href: "/help-feedback",
+      label: "Encaminhar",
+      href: "/orders/forward"
     },
     {
       label: "Logout",
-      href: "/logout",
+      href: "/",
     },
   ],
-  links: {
-    github: "https://github.com/nextui-org/nextui",
-    twitter: "https://twitter.com/getnextui",
-    docs: "https://nextui.org",
-    discord: "https://discord.gg/9b6yyZKmH4",
-    sponsor: "https://patreon.com/jrgarciadev",
-  },
 };
