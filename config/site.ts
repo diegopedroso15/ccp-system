@@ -31,7 +31,7 @@ export const siteConfig = {
       href: "/",
     },
   ],
-  coordenatorItems: [
+  coordinatorItems: [
     {
       label: "Home",
       href: "/orders",
@@ -39,6 +39,24 @@ export const siteConfig = {
     {
       label: "Pareceres para aprovar",
       href: "/orders/aproval",
+    },
+    {
+      label: "Deslogar",
+      href: "/",
+    },
+  ],
+  applicantItems: [
+    {
+      label: "Home",
+      href: "/orders",
+    },
+    {
+      label: "Minhas demandas",
+      href: "/orders/applicant",
+    },
+    {
+      label: "Nova demanda",
+      href: "/orders/newOrder",
     },
     {
       label: "Deslogar",

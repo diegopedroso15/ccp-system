@@ -8,8 +8,8 @@ export async function POST(request: Request) {
     const connection = await pool.connect();
     try {
       const result = await connection.query(
-        `INSERT INTO orders (type, status, name, email, description, ownerId)
-         VALUES ($1, 'Solicitado', $2, $3, $4, 1)
+        `INSERT INTO orders (type, status, name, email, description, ownerId, "receptionDate")
+         VALUES ($1, 'Solicitado', $2, $3, $4, 1, NOW())
          RETURNING *`,
         [data.type, data.name, data.email, data.description]
       );

@@ -29,9 +29,9 @@ export type IOrderStatus = {
     | "Concluído Recusado";
 };
 
-export type IEmployee = {
+export type IUser = {
   id: number;
   name: string;
   password: string;
-  role: "coordinator" | "reviewer" | "employee";
+  role: "coordinator" | "reviewer" | "secretary" | "applicant";
 };

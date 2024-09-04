@@ -51,14 +51,18 @@ export const Navbar = () => {
         ? siteConfig.secretaryItems
         : role === "reviewer"
         ? siteConfig.reviewerItems
-        : siteConfig.coordenatorItems;
+        : role === "coordinator"
+        ? siteConfig.coordinatorItems
+        : siteConfig.applicantItems;
 
     const logRole =
       role === "secretary"
         ? "Secretário"
         : role === "reviewer"
         ? "Parecerista"
-        : "Coordenador";
+        : role === "coordinator"
+        ? "Coordenador"
+        : "Solicitante";
 
     setRole(logRole);
     setItems(selectedItems);

@@ -9,16 +9,16 @@ import {
   Select,
   SelectItem,
 } from "@nextui-org/react";
-import { IEmployee, IOrder } from "@/types";
+import { IUser, IOrder } from "@/types";
 import { useParams, useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 
 export default function DetalhesParecer() {
   const router = useRouter();
   const [order, setOrder] = useState<IOrder>();
-  const [secretaries, setSecretaries] = useState<IEmployee[]>([]);
+  const [secretaries, setSecretaries] = useState<IUser[]>([]);
   const [secretary, setSecretary] = useState<number>(0);
-  const [reviewers, setReviewers] = useState<IEmployee[]>([]);
+  const [reviewers, setReviewers] = useState<IUser[]>([]);
   const [reviewer, setReviewer] = useState<number>(0);
   const { id } = useParams();
 
@@ -57,11 +57,14 @@ export default function DetalhesParecer() {
     }
     let orderStatus = status;
     if (orderStatus === "Concluído") {
-      orderStatus = order?.status === "Parecer Aceito" ? "Concluído Aprovado" : "Concluído Recusado";
+      orderStatus =
+        order?.status === "Parecer Aceito"
+          ? "Concluído Aprovado"
+          : "Concluído Recusado";
     }
     await fetch(`/api/orders/${id}/status/`, {
       method: "POST",
-      body: JSON.stringify({ orderStatus }),
+      body: JSON.stringify({ status: orderStatus }),
     });
 
     const response = await fetch(`/api/orders/${id}/${secretary}`, {
@@ -84,7 +87,7 @@ export default function DetalhesParecer() {
     const status = "Revisão Solicitada";
     await fetch(`/api/orders/${id}/status/`, {
       method: "POST",
-      body: JSON.stringify({ status }),
+      body: JSON.stringify({ status: status }),
     });
 
     const response = await fetch(`/api/orders/${id}/${reviewer}`, {

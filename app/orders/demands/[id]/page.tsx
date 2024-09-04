@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { Card, Button, Select, SelectItem } from "@nextui-org/react";
 import { useParams } from "next/navigation";
-import { IEmployee, IOrder, IOrderStatus } from "@/types";
+import { IUser, IOrder, IOrderStatus } from "@/types";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 
@@ -11,27 +11,32 @@ export default function DetalhesDemanda() {
   const { id } = useParams();
   const router = useRouter();
   const [order, setOrder] = useState<IOrder>();
-  const [reviewers, setReviewers] = useState<IEmployee[]>([]);
+  const [reviewers, setReviewers] = useState<IUser[]>([]);
   const [reviewer, setReviewer] = useState(0);
 
-  const [coordinators, setCoordinators] = useState<IEmployee[]>([]);
+  const [coordinators, setCoordinators] = useState<IUser[]>([]);
   const [coordinator, setCoordinator] = useState(0);
 
+  const [applicants, setApplicants] = useState<IUser[]>([]);
+  const [applicant, setApplicant] = useState(0);
+
   useEffect(() => {
-    const fetchReviewers = async () => {
-      const response = await fetch("/api/employees/reviewers", {
+    const fetchEmployees = async () => {
+      const response = await fetch("/api/employees/", {
         method: "GET",
       });
       const data = await response.json();
-      setReviewers(data);
+      setReviewers(
+        data.filter((employee: IUser) => employee.role === "reviewer")
+      );
+      setCoordinators(
+        data.filter((employee: IUser) => employee.role === "coordinator")
+      );
+      setApplicants(
+        data.filter((user: IUser) => user.role === "applicant")
+      );
     };
-    const fetchCoordinators = async () => {
-      const response = await fetch("/api/employees/coordinators", {
-        method: "GET",
-      });
-      const data = await response.json();
-      setCoordinators(data);
-    };
+
     const fetchOrder = async () => {
       const response = await fetch(`/api/orders/${id}`, {
         method: "GET",
@@ -40,8 +45,7 @@ export default function DetalhesDemanda() {
       setOrder(data);
     };
 
-    fetchReviewers();
-    fetchCoordinators();
+    fetchEmployees();
     fetchOrder();
   }, [id]);
 
@@ -101,12 +105,6 @@ export default function DetalhesDemanda() {
             <p className="text-gray-900">{order?.reviewDate}</p>
           </div>
           <div className="flex gap-2">
-            <p className="font-bold text-gray-700">
-              Data de Envio Para parecerista:
-            </p>
-            <p className="text-gray-900">{order?.reviewerSubmissionDate}</p>
-          </div>
-          <div className="flex gap-2">
             <p className="font-bold text-gray-700">Data de Recebimento:</p>
             <p className="text-gray-900">{order?.receptionDate}</p>
           </div>
@@ -152,13 +150,36 @@ export default function DetalhesDemanda() {
           </Select>
 
           <Button
-            color="primary"
+            color="secondary"
             className="w-full mt-5"
             onClick={() => {
               handleSubmission(coordinator);
             }}
           >
             Enviar para Coordenador
+          </Button>
+        </div>
+        <div className="justify-center mt-10">
+          <p className="font-semibold text-blue-600">Encaminhar para Solicitante</p>
+          <Select placeholder="Selecione o solicitante">
+            {applicants.map((applicant) => (
+              <SelectItem
+                key={applicant.name}
+                onClick={() => setApplicant(applicant.id)}
+              >
+                {applicant.name}
+              </SelectItem>
+            ))}
+          </Select>
+
+          <Button
+            color="success"
+            className="w-full mt-5"
+            onClick={() => {
+              handleSubmission(applicant);
+            }}
+          >
+            Enviar para Solicitante
           </Button>
         </div>
       </Card>

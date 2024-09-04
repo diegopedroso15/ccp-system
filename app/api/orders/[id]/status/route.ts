@@ -20,7 +20,7 @@ export async function POST(
       connection.release();
     }
   } catch (error) {
-    console.error(error);
+    console.log(error);
     return NextResponse.json(
       { error: "Erro ao atualizar o status da demanda" },
       { status: 500 }

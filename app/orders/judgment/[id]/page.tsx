@@ -9,7 +9,7 @@ import {
   Select,
   SelectItem,
 } from "@nextui-org/react";
-import { IEmployee, IOrder } from "@/types";
+import { IUser, IOrder } from "@/types";
 import { useParams, useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 
@@ -18,7 +18,7 @@ export default function DetalhesParecer() {
   const [order, setOrder] = useState<IOrder>();
   const [review, setReview] = useState<string>("");
   const [status, setStatus] = useState<string>("");
-  const [secretaries, setSecretaries] = useState<IEmployee[]>([]);
+  const [secretaries, setSecretaries] = useState<IUser[]>([]);
   const [secretary, setSecretary] = useState<number>();
   const { id } = useParams();
 
@@ -29,6 +29,7 @@ export default function DetalhesParecer() {
       });
       const data = await response.json();
       setOrder(data);
+      setReview(data.review);
     };
     const fetchSecretarsecretaries = async () => {
       const response = await fetch("/api/employees/secretaries", {
@@ -43,9 +44,10 @@ export default function DetalhesParecer() {
   }, []);
 
   const handleReviewSubmission = async () => {
+    const reviewer = localStorage.getItem("user");
     const response = await fetch(`/api/orders/review/${order?.id}`, {
       method: "POST",
-      body: JSON.stringify({ review: review, status: status }),
+      body: JSON.stringify({ review: review, status: status, reviewer: reviewer}),
     });
 
     if (response.ok) {
@@ -109,10 +111,10 @@ export default function DetalhesParecer() {
           <Textarea
             fullWidth
             label="Parecer"
-            placeholder="Digite aqui o parecer"
-            onChange={(e) => {
-              setReview(e.target.value);
-            }}
+            placeholder="Digite aqui o  parecer"
+            value={review}
+            onValueChange={setReview}
+            
           />
           <Select className="mt-2" placeholder="Selecione o status do parecer">
             <SelectItem key={1} onClick={() => setStatus("Parecer Aceito")}>

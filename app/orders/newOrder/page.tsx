@@ -32,19 +32,17 @@ export default function EnviarDemanda() {
 
     if (response.ok) {
       toast.success('Demanda enviada com sucesso!');
-      setTipo('');
-      setDescricao('');
-      router.push('/login');
+      router.push('/orders');
     } else {
       toast.error('Erro ao enviar a demanda');
     }
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen p-4 bg-gradient-to-b from-blue-900 to-blue-950">
+    <div className="flex justify-center items-center min-h-full p-4">
       <Card className="max-w-3xl w-full p-8 shadow-lg bg-white rounded-2xl">
         <p className="text-3xl font-bold text-blue-700 mb-6 text-center">
-          Enviar Solicitação
+          Enviar Nova Solicitação
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-6">
