@@ -7,11 +7,16 @@ export async function POST(request: Request) {
 
     const connection = await pool.connect();
     try {
+      const userData = await connection.query(
+        `SELECT * FROM employees WHERE id = $1`,
+        [data.userId]
+      );
+
       const result = await connection.query(
-        `INSERT INTO orders (type, status, name, email, description, ownerId, "receptionDate")
-         VALUES ($1, 'Solicitado', $2, $3, $4, 1, NOW())
+        `INSERT INTO orders (type, status, name, email, description, ownerId, "receptionDate", pdf_base64)
+         VALUES ($1, 'Solicitado', $2, $3, $4, 1, NOW(), $5)
          RETURNING *`,
-        [data.type, data.name, data.email, data.description]
+        [data.type, userData.rows[0].name, userData.rows[0].email, data.description, data.pdf_base64]
       );
 
       const newDemand = {

@@ -4,6 +4,10 @@ export type IconSvgProps = SVGProps<SVGSVGElement> & {
   size?: number;
 };
 
+type Opaque<T, K extends string> = T & { __typename: K }
+
+type Base64 = Opaque<string, "base64">
+
 export type IOrder = {
   id: number;
   type: string;
@@ -16,6 +20,7 @@ export type IOrder = {
   reviewerSubmissionDate: string;
   receptionDate: string;
   review: string;
+  pdf_base64: string
 } & IOrderStatus;
 
 export type IOrderStatus = {

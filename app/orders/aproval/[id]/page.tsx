@@ -102,6 +102,49 @@ export default function DetalhesParecer() {
     }
   };
 
+  const isBase64 = (str: string) => {
+    try {
+      return btoa(atob(str)) === str;
+    } catch (err) {
+      return false;
+    }
+  };
+
+  const handleDownloadPDF = () => {
+    if (!order?.pdf_base64) {
+      toast.error("Nenhum PDF anexado à demanda.");
+      return;
+    }
+    let base64Data = order.pdf_base64;
+    if (base64Data.startsWith("data:application/pdf;base64,")) {
+      base64Data = base64Data.replace("data:application/pdf;base64,", "");
+    }
+
+    if (!isBase64(base64Data)) {
+      toast.error("O arquivo PDF não está codificado corretamente em base64.");
+      return;
+    }
+
+    try {
+      const cleanedBase64 = base64Data.replace(/\s/g, "");
+
+      const byteCharacters = atob(cleanedBase64);
+      const byteNumbers = new Array(byteCharacters.length)
+        .fill(0)
+        .map((_, i) => byteCharacters.charCodeAt(i));
+      const byteArray = new Uint8Array(byteNumbers);
+      const blob = new Blob([byteArray], { type: "application/pdf" });
+
+      const link = document.createElement("a");
+      link.href = window.URL.createObjectURL(blob);
+      link.download = `demanda_${order.id}.pdf`;
+      link.click();
+    } catch (error) {
+      toast.error("Erro ao processar o PDF.");
+      console.error("Erro no download do PDF: ", error);
+    }
+  };
+
   return (
     <div className="flex justify-center items-center min-h-screen p-4">
       <Card className="max-w-3xl w-full p-8 shadow-lg bg-white rounded-2xl">
@@ -109,6 +152,17 @@ export default function DetalhesParecer() {
           Detalhes da Demanda
         </h1>
 
+        {order?.pdf_base64 && (
+          <div className="my-4">
+            <Button
+              color="success"
+              className="w-full"
+              onClick={handleDownloadPDF}
+            >
+              Baixar PDF Anexado
+            </Button>
+          </div>
+        )}
         <div className="space-y-4 mb-6">
           <div className="flex justify-between">
             <p className="font-semibold text-gray-700">ID:</p>

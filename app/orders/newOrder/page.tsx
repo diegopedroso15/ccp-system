@@ -1,40 +1,53 @@
 "use client";
 
-import { useState } from 'react';
+import { useState } from "react";
 import { Card, Button, Input, Textarea } from "@nextui-org/react";
-import { toast } from 'react-toastify';
-import { useRouter } from 'next/navigation';
+import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 
 export default function EnviarDemanda() {
   const router = useRouter();
-  const [nome, setNome] = useState('');
-  const [email, setEmail] = useState('');
-  const [tipo, setTipo] = useState('');
-  const [descricao, setDescricao] = useState('');
+  const [tipo, setTipo] = useState("");
+  const [descricao, setDescricao] = useState("");
+  const [arquivo, setArquivo] = useState<string | null>(null); // Base64 do PDF
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
 
     const novaDemanda = {
-      name: nome,
-      email,
+      userId: localStorage.getItem("user"),
       type: tipo,
       description: descricao,
+      pdf_base64: arquivo,
     };
 
-    const response = await fetch('/api/orders', {
-      method: 'POST',
+    const response = await fetch("/api/orders", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(novaDemanda),
     });
 
     if (response.ok) {
-      toast.success('Demanda enviada com sucesso!');
-      router.push('/orders');
+      toast.success("Demanda enviada com sucesso!");
+      router.push("/orders");
     } else {
-      toast.error('Erro ao enviar a demanda');
+      toast.error("Erro ao enviar a demanda");
+    }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        if (reader.result) {
+          setArquivo(reader.result.toString());
+        }
+      };
+      reader.readAsDataURL(file);
     }
   };
 
@@ -46,22 +59,6 @@ export default function EnviarDemanda() {
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          <Input
-            fullWidth
-            label="Nome"
-            placeholder="Ex: João da Silva"
-            value={nome}
-            onChange={(e: any) => setNome(e.target.value)}
-            required
-          />
-          <Input
-            fullWidth
-            label="Email"
-            placeholder="Ex: joaosilva@usp.br"
-            value={email}
-            onChange={(e: any) => setEmail(e.target.value)}
-            required
-          />
           <Input
             fullWidth
             label="Tipo de Demanda"
@@ -78,12 +75,16 @@ export default function EnviarDemanda() {
             onChange={(e: any) => setDescricao(e.target.value)}
             required
           />
-
-          <Button
-            type="submit"
-            color="primary"
-            className="w-full"
-          >
+          <div className="py-4 px-3 bg-gray-100 rounded-lg text-gray-700 text-small">
+            <p className="py-2 font-semibold">Anexar PDF</p>
+            <Input
+              type="file"
+              accept="application/pdf"
+              onChange={handleFileChange}
+              required
+            />
+          </div>
+          <Button type="submit" color="primary" className="w-full">
             Enviar Demanda
           </Button>
         </form>
